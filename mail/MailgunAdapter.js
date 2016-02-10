@@ -6,13 +6,13 @@ function MailgunAdapter(appId, mailApiConfig) {
   MailAdapter.call(this);
 }
 
-MailgunAdapter.prototype = Object.create(MailAdapter);
+MailgunAdapter.prototype = Object.create(MailAdapter.prototype);
 
 // Connects to the database. Returns a promise that resolves when the
 // connection is successful.
 // this.db will be populated with a Mongo "Db" object when the
 // promise resolves successfully.
-MailgunAdapter.sendMail = function(to, subject, text, html) {
+MailgunAdapter.prototype.sendMail = function(to, subject, text, html) {
 
   var mailgun = require('mailgun-js')({apiKey: this.apiConfig.apiKey, domain: this.apiConfig.domain});
 
