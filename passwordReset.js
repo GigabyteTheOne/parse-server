@@ -8,14 +8,17 @@ function passwordReset (appName, appId) {
 
   return function (req, res) {
     var mount = req.protocol + '://' + req.get('host') + req.baseUrl;
+    var lastSegment = '/' + mount.split('/').pop();
+    mount = mount.replace(lastSegment, '');
 
     Promise.resolve()
       .then(()=> {
         var error = null;
-        var password = req.body.password;
-        var passwordConfirm = req.body.passwordConfirm;
-        var username = req.body.username;
-        var token = req.body.token;
+        var body = Object.assign(req.body ? req.body : {}, req.query);
+        var password = body.password;
+        var passwordConfirm = body.passwordConfirm;
+        var username = body.username;
+        var token = body.token;
         if (req.method !== 'POST') {
           return Promise.resolve()
         }
@@ -61,12 +64,9 @@ function passwordReset (appName, appId) {
         if (error === true) {
           return;
         }
-        var token = req.query.token;
-        var username = req.query.username;
-        if (req.body.token && req.body.username) {
-          token = req.body.token;
-          username = req.body.username;
-        }
+        var body = Object.assign(req.body ? req.body : {}, req.query);
+        var token = body.token;
+        var username = body.username;
         var actionUrl = mount + '/request_password_reset?token=' + encodeURIComponent(token) + "&username=" + encodeURIComponent(username);
         if (!token || !username) {
           return res.status(404).render('not-found')
@@ -77,7 +77,7 @@ function passwordReset (appName, appId) {
           username: req.query.username,
           action: actionUrl,
           error: error
-        })
+        });
       })
       .catch(()=>{
         res.status(404).render('not-found')

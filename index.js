@@ -111,12 +111,13 @@ function ParseServer(args) {
   // This app serves the Parse API directly.
   // It's the equivalent of https://api.parse.com/1 in the hosted Parse API.
   var api = express();
+  api.use(bodyParser.urlencoded({ 'type': 'application/x-www-form-urlencoded' }));
 
   // File handling needs to be before default middlewares are applied
   api.use('/', require('./files').router);
   api.set('views', path.join(__dirname, 'views'));
   api.use('/img', express.static(path.resolve(__dirname, 'img')));
-    api.use("/request_password_reset", require('./passwordReset').reset(args.appName, args.appId));
+  api.use("/request_password_reset", require('./passwordReset').reset(args.appName, args.appId));
   api.get("/password_reset_success", require('./passwordReset').success);
   api.get("/verify_email", require('./verifyEmail')(args.appId));
 
